@@ -4,6 +4,8 @@ const messagesStore = {};
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { phoneNumber, message, timestamp } = req.body;
+    // Log incoming message data for debugging
+    console.log('[API/messages] Received:',  req.body );
     if (!phoneNumber || !message) {
       return res.status(400).json({ error: 'phoneNumber and message are required' });
     }

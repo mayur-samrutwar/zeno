@@ -17,13 +17,7 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState(null);
   const [sessionToken, setSessionToken] = useState(null);
 
-  const initialMessages = [
-    { id: 1, sender: 'Google', text: 'Your verification code is 812934', time: '2m ago', isNew: true },
-    { id: 2, sender: 'Discord', text: 'Your 6-digit code is 302551. It expires in 10 minutes.', time: '5m ago', isNew: false },
-    { id: 3, sender: 'Amazon', text: 'To authenticate, please use the following One Time Password (OTP): 684332', time: '1h ago', isNew: false },
-  ];
-
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState([]);
 
   // Generate a random phone number
   const phoneNumber = '+1 (555) 123-4567';
@@ -151,31 +145,6 @@ export default function Home() {
       console.error('Failed to copy: ', err);
     }
   };
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    // Simulate fetching new messages
-    setTimeout(() => {
-      const newMessage = {
-        id: messages.length + 1,
-        sender: 'Telegram',
-        text: `Your login code is ${Math.floor(100000 + Math.random() * 900000)}.`,
-        time: '1s ago',
-        isNew: true,
-      };
-      setMessages(prev => [newMessage, ...prev.map(m => ({ ...m, isNew: false }))]);
-      setIsRefreshing(false);
-    }, 1500);
-  };
-  
-  useEffect(() => {
-    if (step === 'otp') {
-      const interval = setInterval(() => {
-        handleRefresh();
-      }, 15000);
-      return () => clearInterval(interval);
-    }
-  }, [step]);
 
   // Debug account state changes
   useEffect(() => {
@@ -403,6 +372,12 @@ export default function Home() {
     setPhoneData(null);
     setSessionToken(null);
     setStep('options');
+  };
+
+  // Add a placeholder refresh handler for now
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 800); // Placeholder for real fetch
   };
 
   return (
