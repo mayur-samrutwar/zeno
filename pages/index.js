@@ -283,6 +283,15 @@ export default function Home() {
 
   const renderOtpDisplay = () => (
     <div className="w-full max-w-2xl mx-auto">
+      {/* Logout Button */}
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={handleLogout}
+          className="px-3 py-1.5 text-xs font-semibold rounded bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-600 transition-all border border-slate-200"
+        >
+          Logout
+        </button>
+      </div>
       {/* Phone Number Display */}
       <div className="bg-slate-50/50 rounded-xl p-4 mb-6 border border-slate-200">
         <div className="flex items-center justify-between">
@@ -386,6 +395,15 @@ export default function Home() {
       localStorage.removeItem('sessionToken');
     }
   }, [timeLeft]);
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem('phoneData');
+    localStorage.removeItem('sessionToken');
+    setPhoneData(null);
+    setSessionToken(null);
+    setStep('options');
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen flex items-center justify-center font-sans p-4">
