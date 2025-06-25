@@ -14,6 +14,8 @@ export default function Home() {
   const [walletClient, setWalletClient] = useState(null);
   const [account, setAccount] = useState(null);
   const [phoneData, setPhoneData] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [sessionToken, setSessionToken] = useState(null);
 
   const initialMessages = [
     { id: 1, sender: 'Google', text: 'Your verification code is 812934', time: '2m ago', isNew: true },
@@ -96,6 +98,9 @@ export default function Home() {
       if (response.ok) {
         const data = await response.json();
         setPhoneData(data);
+        setSessionToken(data.sessionToken);
+        localStorage.setItem('phoneData', JSON.stringify(data));
+        localStorage.setItem('sessionToken', data.sessionToken);
         setStep('otp');
         
         // Decode payment response for logging - with error handling
@@ -176,6 +181,30 @@ export default function Home() {
   useEffect(() => {
     console.log('Account state changed:', account);
   }, [account]);
+
+  // Update timer when phoneData changes
+  useEffect(() => {
+    if (phoneData?.expiresAt && step === 'otp') {
+      const expiry = new Date(phoneData.expiresAt).getTime();
+      const update = () => {
+        const now = Date.now();
+        const diff = Math.max(0, Math.floor((expiry - now) / 1000));
+        setTimeLeft(diff);
+      };
+      update();
+      const interval = setInterval(update, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setTimeLeft(null);
+    }
+  }, [phoneData, step]);
+
+  // Format seconds as MM:SS
+  function formatTimeLeft(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
 
   const OptionCard = ({ title, description, price, icon, onClick }) => (
     <button
@@ -263,6 +292,11 @@ export default function Home() {
             {phoneData?.expiresAt && (
               <p className="text-xs text-slate-400 mt-1">
                 Expires: {new Date(phoneData.expiresAt).toLocaleString()}
+                {typeof timeLeft === 'number' && (
+                  <span className={`ml-2 px-2 py-0.5 rounded font-mono text-xs font-semibold ${timeLeft < 60 ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'}`}>
+                    {timeLeft > 0 ? `Time left: ${formatTimeLeft(timeLeft)}` : 'Session expired'}
+                  </span>
+                )}
               </p>
             )}
           </div>
@@ -320,6 +354,38 @@ export default function Home() {
       </div>
     </div>
   );
+
+  // Restore session from localStorage on mount
+  useEffect(() => {
+    const storedPhoneData = localStorage.getItem('phoneData');
+    const storedSessionToken = localStorage.getItem('sessionToken');
+    if (storedPhoneData && storedSessionToken) {
+      try {
+        const parsed = JSON.parse(storedPhoneData);
+        // Check if session is still valid (not expired)
+        if (parsed.expiresAt && new Date(parsed.expiresAt).getTime() > Date.now()) {
+          setPhoneData(parsed);
+          setSessionToken(storedSessionToken);
+          setStep('otp');
+        } else {
+          // Expired, clear storage
+          localStorage.removeItem('phoneData');
+          localStorage.removeItem('sessionToken');
+        }
+      } catch (e) {
+        localStorage.removeItem('phoneData');
+        localStorage.removeItem('sessionToken');
+      }
+    }
+  }, []);
+
+  // Clear session from localStorage when session expires
+  useEffect(() => {
+    if (typeof timeLeft === 'number' && timeLeft === 0) {
+      localStorage.removeItem('phoneData');
+      localStorage.removeItem('sessionToken');
+    }
+  }, [timeLeft]);
 
   return (
     <div className="bg-slate-50 min-h-screen flex items-center justify-center font-sans p-4">

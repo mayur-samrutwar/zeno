@@ -1,4 +1,6 @@
 import { PAYMENT_CONFIG, getPaymentAmount } from '../../config/payment';
+import { createSession } from '../../lib/sessionStore';
+import crypto from 'crypto';
 
 export default async function handler(req, res) {
   // This code only runs after successful payment verification by x402 middleware
@@ -15,11 +17,25 @@ export default async function handler(req, res) {
   const expiresAt = plan === 'temp' 
     ? new Date(now.getTime() + 10 * 60 * 1000) // 10 minutes
     : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
-  
+
+  // Generate a session token (sessionId)
+  const sessionId = crypto.randomUUID();
+
+  // Create and store the session
+  createSession({
+    sessionId,
+    phoneNumber,
+    expiresAt: expiresAt.toISOString(),
+    active: true,
+    plan: plan === 'temp' ? 'Quick Pass' : 'Monthly Rental',
+    paymentAmount
+  });
+
   return res.json({
     phoneNumber,
     expiresAt: expiresAt.toISOString(),
     plan: plan === 'temp' ? 'Quick Pass' : 'Monthly Rental',
-    paymentAmount: paymentAmount
+    paymentAmount: paymentAmount,
+    sessionToken: sessionId
   });
 } 
