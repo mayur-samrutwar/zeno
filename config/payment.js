@@ -13,7 +13,7 @@ export const PAYMENT_CONFIG = {
   CURRENCY: 'USDC',
   
   // Network configuration
-  NETWORK: 'base', // Base Sepolia testnet
+  NETWORK: 'base-sepolia', // Base Sepolia testnet
   
   // Payment timeout
   TIMEOUT_SECONDS: 300, // 5 minutes

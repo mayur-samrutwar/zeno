@@ -6,7 +6,7 @@ export const middleware = paymentMiddleware(
   {  // Route configurations for protected endpoints
     '/api/phone-number': {
       price: '$0.01', // Fixed price for testing - $0.01 USDC
-      network: "base", // Base Sepolia testnet
+      network: "base-sepolia", // Base Sepolia testnet
       config: {
         description: 'Access to temporary phone number service',
         maxTimeoutSeconds: 300

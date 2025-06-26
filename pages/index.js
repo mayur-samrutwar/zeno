@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Mail, RefreshCw, ArrowLeft, ShieldCheck, Calendar, Copy, Check, Wallet } from 'lucide-react';
 import { wrapFetchWithPayment, decodeXPaymentResponse } from 'x402-fetch';
 import { createWalletClient, custom } from 'viem';
-import { base } from 'viem/chains';
+import { baseSepolia } from 'viem/chains';
 import Head from 'next/head';
 
 export default function Home() {
@@ -42,7 +42,7 @@ export default function Home() {
         // Create wallet client with the account hoisted
         const client = createWalletClient({
           account: address,
-          chain: base,
+          chain: baseSepolia,
           transport: custom(window.ethereum)
         });
         
