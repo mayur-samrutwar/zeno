@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Mail, RefreshCw, ArrowLeft, ShieldCheck, Calendar, Copy, Check, Wallet } from 'lucide-react';
 import { wrapFetchWithPayment, decodeXPaymentResponse } from 'x402-fetch';
 import { createWalletClient, custom } from 'viem';
-import { baseSepolia } from 'viem/chains';
+import { base } from 'viem/chains';
+import Head from 'next/head';
 
 export default function Home() {
   const [step, setStep] = useState('options'); // 'options', 'payment', 'otp'
@@ -41,7 +42,7 @@ export default function Home() {
         // Create wallet client with the account hoisted
         const client = createWalletClient({
           account: address,
-          chain: baseSepolia,
+          chain: base,
           transport: custom(window.ethereum)
         });
         
@@ -434,18 +435,23 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center font-sans p-4">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-800 text-center mb-2">Zeno: Get a Temporary Private Number</h1>
-        <p className="text-slate-500 text-center mb-8">Choose a plan to start receiving secure messages.</p>
-      </div>
-      <div className="w-full max-w-3xl">
-        <div className="bg-purple-100 relative border-4 border-dashed border-purple-300 rounded-3xl w-full p-8 sm:p-12 transition-all duration-300 flex flex-col items-center justify-center">
-          {step === 'options' && renderOptions()}
-          {step === 'payment' && renderPayment()}
-          {step === 'otp' && renderOtpDisplay()}
+    <>
+      <Head>
+        <title>Zeno - Temporary Private Number</title>
+      </Head>
+      <div className="bg-white min-h-screen flex flex-col items-center justify-center font-sans p-4">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-800 text-center mb-2">Zeno: Get a Temporary Private Number</h1>
+          <p className="text-slate-500 text-center mb-8">Choose a plan to start receiving secure messages.</p>
+        </div>
+        <div className="w-full max-w-3xl">
+          <div className="bg-purple-100 relative border-4 border-dashed border-purple-300 rounded-3xl w-full p-8 sm:p-12 transition-all duration-300 flex flex-col items-center justify-center">
+            {step === 'options' && renderOptions()}
+            {step === 'payment' && renderPayment()}
+            {step === 'otp' && renderOtpDisplay()}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
