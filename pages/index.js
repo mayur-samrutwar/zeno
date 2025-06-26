@@ -259,7 +259,7 @@ export default function Home() {
         </button>
       </div>
       {/* Phone Number Display */}
-      <div className="bg-white rounded-xl p-4 mb-6 border border-slate-200">
+      <div className="bg-white rounded-xl p-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-slate-500 mb-1">Your assigned number:</p>
@@ -307,7 +307,7 @@ export default function Home() {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex items-start py-5 px-2 sm:px-4 bg-transparent transition-all duration-300 ${msg.isNew ? 'bg-blue-50/40' : ''}`}
+            className={`flex items-start py-5 px-2 sm:px-4 bg-white transition-all duration-300 ${msg.isNew ? 'bg-blue-50/40' : ''}`}
           >
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-blue-600 mr-4 text-base mt-1">
               {msg.sender.charAt(0)}
@@ -397,13 +397,15 @@ export default function Home() {
   // Helper to format time ago
   function formatTimeAgo(timestamp) {
     if (!timestamp) return '';
+    let ts = Number(timestamp);
+    // If it's a 10-digit number, treat as seconds, convert to ms
+    if (ts < 1e12) ts = ts * 1000;
     const now = Date.now();
-    const then = new Date(timestamp).getTime();
-    const diff = Math.floor((now - then) / 1000);
+    const diff = Math.floor((now - ts) / 1000);
     if (diff < 60) return `${diff}s ago`;
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    return new Date(timestamp).toLocaleString();
+    return new Date(ts).toLocaleString();
   }
 
   return (
