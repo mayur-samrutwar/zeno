@@ -389,7 +389,18 @@ export default function Home() {
   }, [timeLeft]);
 
   // Logout handler
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (sessionToken) {
+      try {
+        await fetch('/api/logout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionToken }),
+        });
+      } catch (e) {
+        // Ignore errors, still clear local state
+      }
+    }
     localStorage.removeItem('phoneData');
     localStorage.removeItem('sessionToken');
     setPhoneData(null);
