@@ -409,7 +409,7 @@ export default function Home() {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center font-sans p-4">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-800 text-center mb-2">Get a Temporary Private Number</h1>
+        <h1 className="text-3xl font-bold text-slate-800 text-center mb-2">Zeno: Get a Temporary Private Number</h1>
         <p className="text-slate-500 text-center mb-8">Choose a plan to start receiving secure messages.</p>
       </div>
       <div className="w-full max-w-3xl">
