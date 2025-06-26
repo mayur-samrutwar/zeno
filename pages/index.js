@@ -177,9 +177,9 @@ export default function Home() {
   const OptionCard = ({ title, description, price, icon, onClick }) => (
     <button
       onClick={onClick}
-      className="group w-full sm:w-1/2 bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg rounded-2xl p-6 flex flex-col items-center hover:shadow-2xl hover:border-blue-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-200"
+      className="group w-80 bg-purple-50 border-8 border-white shadow-lg rounded-2xl p-6 flex flex-col items-center hover:shadow-2xl  transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-200"
     >
-      <div className="mb-4 flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 text-blue-600">
+      <div className="mb-4 flex items-center justify-center w-12 h-12 rounded-xl bg-white text-purple-600">
         {icon}
       </div>
       <h3 className="text-lg font-semibold text-slate-800 mb-1 text-center">{title}</h3>
@@ -190,20 +190,18 @@ export default function Home() {
 
   const renderOptions = () => (
     <div>
-      <h1 className="text-3xl font-bold text-slate-800 text-center mb-2">Get a Private Number</h1>
-      <p className="text-slate-500 text-center mb-8">Choose a plan to start receiving secure messages.</p>
       <div className="flex flex-col sm:flex-row gap-6">
         <OptionCard
           title="Quick Pass"
-          description="Temporary number for 10 minutes. Ideal for one-time verifications."
-          price="$5"
+          description="Validity: 10 minutes"
+          price="1 USDC"
           icon={<ShieldCheck size={28} />}
           onClick={() => handleOptionClick('temp')}
         />
         <OptionCard
           title="Monthly Rental"
-          description="Dedicated number for a month. Unlimited messages."
-          price="$25"
+          description="Validity: 30 days"
+          price="25 USDC"
           icon={<Calendar size={28} />}
           onClick={() => handleOptionClick('rent')}
         />
@@ -213,7 +211,7 @@ export default function Home() {
 
   const renderPayment = () => (
     <div className="flex flex-col items-center justify-center min-h-[350px]">
-      <button onClick={handleBack} className="absolute top-6 left-6 text-slate-400 hover:text-blue-600 transition-colors">
+      <button onClick={handleBack} className="absolute top-6 left-6 text-black hover:text-blue-600 transition-colors">
         <ArrowLeft size={24} />
       </button>
       <h1 className="text-2xl font-bold text-slate-800 mb-2 text-center">Complete Payment</h1>
@@ -232,17 +230,17 @@ export default function Home() {
         </button>
       ) : (
         <div className="w-full max-w-xs space-y-4">
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
+          {/* <div className="bg-slate-50 rounded-lg p-3 text-center">
             <p className="text-sm text-slate-500">Connected Wallet</p>
             <p className="text-xs font-mono text-slate-700 truncate">{account.address}</p>
             <p className="text-xs text-slate-400 mt-1">Ready to pay</p>
-          </div>
+          </div> */}
           <button
             onClick={handlePayment}
             disabled={isPaying}
             className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all text-lg"
           >
-            {isPaying ? 'Processing Payment...' : `Pay ${option === 'temp' ? '$5' : '$25'} with USDT`}
+            {isPaying ? 'Processing Payment...' : `Pay ${option === 'temp' ? '1 USDC' : '25 USDC'}`}
           </button>
         </div>
       )}
@@ -255,13 +253,13 @@ export default function Home() {
       <div className="flex justify-end mb-2">
         <button
           onClick={handleLogout}
-          className="px-3 py-1.5 text-xs font-semibold rounded bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-600 transition-all border border-slate-200"
+          className="px-3 py-1.5 text-xs font-semibold rounded bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-600 transition-all"
         >
           Logout
         </button>
       </div>
       {/* Phone Number Display */}
-      <div className="bg-slate-50/50 rounded-xl p-4 mb-6 border border-slate-200">
+      <div className="bg-white rounded-xl p-4 mb-6 border border-slate-200">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-slate-500 mb-1">Your assigned number:</p>
@@ -409,11 +407,17 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen flex items-center justify-center font-sans p-4">
-      <div className="relative bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-2xl rounded-3xl w-full max-w-3xl p-8 sm:p-12 transition-all duration-300 flex flex-col items-center justify-center">
-        {step === 'options' && renderOptions()}
-        {step === 'payment' && renderPayment()}
-        {step === 'otp' && renderOtpDisplay()}
+    <div className="bg-white min-h-screen flex flex-col items-center justify-center font-sans p-4">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-slate-800 text-center mb-2">Get a Temporary Private Number</h1>
+        <p className="text-slate-500 text-center mb-8">Choose a plan to start receiving secure messages.</p>
+      </div>
+      <div className="w-full max-w-3xl">
+        <div className="bg-purple-100 relative border-4 border-dashed border-purple-300 rounded-3xl w-full p-8 sm:p-12 transition-all duration-300 flex flex-col items-center justify-center">
+          {step === 'options' && renderOptions()}
+          {step === 'payment' && renderPayment()}
+          {step === 'otp' && renderOtpDisplay()}
+        </div>
       </div>
     </div>
   );
