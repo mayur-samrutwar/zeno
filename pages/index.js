@@ -16,6 +16,7 @@ export default function Home() {
   const [phoneData, setPhoneData] = useState({ phoneNumber: '+91 9168163896' });
   const [timeLeft, setTimeLeft] = useState(null);
   const [sessionToken, setSessionToken] = useState(null);
+  const [numberAvailable, setNumberAvailable] = useState(true);
 
   const [messages, setMessages] = useState([]);
 
@@ -174,10 +175,27 @@ export default function Home() {
     return `${m}:${s}`;
   }
 
-  const OptionCard = ({ title, description, price, icon, onClick }) => (
+  // Check number availability on mount and after logout/session expiry
+  useEffect(() => {
+    async function checkAvailability() {
+      try {
+        const res = await fetch('/api/number-available');
+        if (res.ok) {
+          const data = await res.json();
+          setNumberAvailable(data.available);
+        }
+      } catch (e) {
+        setNumberAvailable(true); // fallback: allow
+      }
+    }
+    checkAvailability();
+  }, [step]);
+
+  const OptionCard = ({ title, description, price, icon, onClick, disabled, disabledText }) => (
     <button
       onClick={onClick}
-      className="group w-80 bg-purple-50 border-8 border-white shadow-lg rounded-2xl p-6 flex flex-col items-center hover:shadow-2xl  transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-200"
+      className={`group w-80 bg-purple-50 border-8 border-white shadow-lg rounded-2xl p-6 flex flex-col items-center hover:shadow-2xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-200 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={disabled}
     >
       <div className="mb-4 flex items-center justify-center w-12 h-12 rounded-xl bg-white text-purple-600">
         {icon}
@@ -185,6 +203,9 @@ export default function Home() {
       <h3 className="text-lg font-semibold text-slate-800 mb-1 text-center">{title}</h3>
       <p className="text-sm text-slate-500 mb-4 text-center">{description}</p>
       <span className="mt-auto text-xl font-bold text-slate-900 text-center w-full block">{price}</span>
+      {disabled && (
+        <span className="mt-2 text-xs font-semibold text-red-500">{disabledText || 'Not available'}</span>
+      )}
     </button>
   );
 
@@ -197,13 +218,17 @@ export default function Home() {
           price="1 USDC"
           icon={<ShieldCheck size={28} />}
           onClick={() => handleOptionClick('temp')}
+          disabled={!numberAvailable}
+          disabledText="No numbers available"
         />
         <OptionCard
           title="Monthly Rental"
           description="Validity: 30 days"
           price="25 USDC"
           icon={<Calendar size={28} />}
-          onClick={() => handleOptionClick('rent')}
+          onClick={() => {}}
+          disabled={true}
+          disabledText="No numbers available"
         />
       </div>
     </div>
