@@ -13,14 +13,13 @@ export default function Home() {
   const [isPaying, setIsPaying] = useState(false);
   const [walletClient, setWalletClient] = useState(null);
   const [account, setAccount] = useState(null);
-  const [phoneData, setPhoneData] = useState(null);
+  const [phoneData, setPhoneData] = useState({ phoneNumber: '+91 9168163896' });
   const [timeLeft, setTimeLeft] = useState(null);
   const [sessionToken, setSessionToken] = useState(null);
 
   const [messages, setMessages] = useState([]);
 
-  // Generate a random phone number
-  const phoneNumber = '+1 (555) 123-4567';
+  const DEFAULT_NUMBER = '+91 9168163896';
 
   const handleOptionClick = (selectedOption) => {
     setOption(selectedOption);
@@ -266,7 +265,7 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-slate-500 mb-1">Your assigned number:</p>
-            <p className="text-lg font-bold text-slate-800 font-mono">{phoneData?.phoneNumber || 'Loading...'}</p>
+            <p className="text-lg font-bold text-slate-800 font-mono">{DEFAULT_NUMBER}</p>
             {phoneData?.expiresAt && (
               <p className="text-xs text-slate-400 mt-1">
                 Expires: {new Date(phoneData.expiresAt).toLocaleString()}
@@ -375,10 +374,39 @@ export default function Home() {
   };
 
   // Add a placeholder refresh handler for now
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 800); // Placeholder for real fetch
+    try {
+      const res = await fetch(`/api/messages`);
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(
+          (data.messages || []).map((msg, idx) => ({
+            id: idx + 1,
+            sender: 'SMS',
+            text: msg.message,
+            time: formatTimeAgo(msg.timestamp),
+            isNew: idx === 0,
+          }))
+        );
+      }
+    } catch (e) {
+      console.error('Failed to fetch messages:', e);
+    }
+    setIsRefreshing(false);
   };
+
+  // Helper to format time ago
+  function formatTimeAgo(timestamp) {
+    if (!timestamp) return '';
+    const now = Date.now();
+    const then = new Date(timestamp).getTime();
+    const diff = Math.floor((now - then) / 1000);
+    if (diff < 60) return `${diff}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return new Date(timestamp).toLocaleString();
+  }
 
   return (
     <div className="bg-slate-50 min-h-screen flex items-center justify-center font-sans p-4">
