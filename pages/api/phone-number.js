@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     sessionId,
     phoneNumber: DEFAULT_NUMBER,
     expiresAt: expiresAt.toISOString(),
+    createdAt: now.toISOString(),
     active: true,
     plan: 'Quick Pass',
     paymentAmount

@@ -412,7 +412,7 @@ export default function Home() {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      const res = await fetch(`/api/messages`);
+      const res = await fetch(`/api/messages?sessionToken=${encodeURIComponent(sessionToken || '')}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(
