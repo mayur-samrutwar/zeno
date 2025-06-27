@@ -5,7 +5,7 @@ export const PAYMENT_CONFIG = {
   
   // Payment amounts in USDC (6 decimals)
   AMOUNTS: {
-    QUICK_PASS: '100000', // $5 USDC = 5,000,000 wei
+    QUICK_PASS: '10000000', // $5 USDC = 5,000,000 wei
     MONTHLY_RENTAL: '25000000', // $25 USDC = 25,000,000 wei
   },
   
